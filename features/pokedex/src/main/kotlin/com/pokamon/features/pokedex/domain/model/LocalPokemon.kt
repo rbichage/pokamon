@@ -1,11 +1,11 @@
 package com.pokamon.features.pokedex.domain.model
 
 import com.pokamon.features.networking.util.createImageUrl
-import com.pokamon.features.pokedex.data.model.CharacterDTO
-import com.pokamon.features.pokedex.domain.mapper.CharacterColor
+import com.pokamon.features.pokedex.data.model.PokemonDTO
+import com.pokamon.features.pokedex.domain.mapper.PokemonColor
 
 
-data class Character(
+data class Pokemon(
     val id: String,
     val name: String,
     val stats: List<Pair<String, Int>>, //name, value
@@ -15,18 +15,18 @@ data class Character(
     val weight: String,
     val abilities: List<Pair<String, Boolean>>, //name, hidden
     val types: List<String>,
-    val characterColor: CharacterColor,
+    val pokemonColor: PokemonColor,
 )
 
-data class CharacterListing(
+data class PokemonListing(
     val id: String,
     val name: String,
     val imageUrl: String
 )
 
-fun List<CharacterDTO>.toCharacterListing() = map {
+fun List<PokemonDTO>.toCharacterListing() = map {
     val id = it.url.getIdFromUrl()
-    CharacterListing(
+    PokemonListing(
         name = it.name,
         id = id,
         imageUrl = createImageUrl(id)

@@ -2,12 +2,12 @@ package com.pokamon.features.pokedex.domain.mapper
 
 import com.pokamon.features.networking.util.BaseResult
 import com.pokamon.features.networking.util.createImageUrl
-import com.pokamon.features.pokedex.data.model.CharacterDetailsResponse
+import com.pokamon.features.pokedex.data.model.PokemonDetailsResponse
 import com.pokamon.features.pokedex.data.model.SpeciesResponse
-import com.pokamon.features.pokedex.domain.model.Character
+import com.pokamon.features.pokedex.domain.model.Pokemon
 import com.pokamon.features.pokedex.domain.model.getIdFromUrl
-import com.pokamon.features.pokedex.domain.usecase.CharacterDetailsResult
-import com.pokamon.features.pokedex.domain.usecase.GetCharacterDetails
+import com.pokamon.features.pokedex.domain.usecase.PokemonDetailsResult
+import com.pokamon.features.pokedex.domain.usecase.GetPokemonDetails
 import com.slack.eithernet.ApiResult
 import timber.log.Timber
 import java.util.Locale
@@ -15,16 +15,16 @@ import javax.inject.Inject
 
 interface CharacterDetailsMapper {
     fun mapResult(
-        characterDetailsResult: ApiResult<CharacterDetailsResponse, Any>,
+        characterDetailsResult: ApiResult<PokemonDetailsResponse, Any>,
         speciesDetailsResult: ApiResult<SpeciesResponse, Any>,
-    ): CharacterDetailsResult
+    ): PokemonDetailsResult
 }
 
 class CharacterDetailsMapperImpl @Inject internal constructor() : CharacterDetailsMapper {
     override fun mapResult(
-        characterDetailsResult: ApiResult<CharacterDetailsResponse, Any>,
+        characterDetailsResult: ApiResult<PokemonDetailsResponse, Any>,
         speciesDetailsResult: ApiResult<SpeciesResponse, Any>
-    ): CharacterDetailsResult {
+    ): PokemonDetailsResult {
         return when (characterDetailsResult) {
             is ApiResult.Success -> {
                 when (speciesDetailsResult) {
@@ -34,7 +34,7 @@ class CharacterDetailsMapperImpl @Inject internal constructor() : CharacterDetai
 
 
                         val id = details.species.url.getIdFromUrl()
-                        val mapped = Character(
+                        val mapped = Pokemon(
                             id = id,
                             name = details.species.name,
                             stats = details.stats.map {
@@ -59,24 +59,24 @@ class CharacterDetailsMapperImpl @Inject internal constructor() : CharacterDetai
                             types = details.types.map {
                                 it.type.name
                             },
-                            characterColor = mapToColor(species.color.name)
+                            pokemonColor = mapToColor(species.color.name)
                         )
 
                         BaseResult.Success(mapped)
                     }
 
                     is ApiResult.Failure.NetworkFailure, is ApiResult.Failure.ApiFailure -> {
-                        BaseResult.Failure(GetCharacterDetails.Errors.NetworkError)
+                        BaseResult.Failure(GetPokemonDetails.Errors.NetworkError)
                     }
 
                     is ApiResult.Failure.UnknownFailure -> {
                         speciesDetailsResult.error.printStackTrace()
-                        BaseResult.Failure(GetCharacterDetails.Errors.UnknownError)
+                        BaseResult.Failure(GetPokemonDetails.Errors.UnknownError)
                     }
 
                     is ApiResult.Failure.HttpFailure -> {
                         BaseResult.Failure(
-                            GetCharacterDetails.Errors.HttpError(
+                            GetPokemonDetails.Errors.HttpError(
                                 speciesDetailsResult.error.toString()
                             )
                         )
@@ -85,22 +85,22 @@ class CharacterDetailsMapperImpl @Inject internal constructor() : CharacterDetai
             }
 
             is ApiResult.Failure.NetworkFailure -> {
-                BaseResult.Failure(GetCharacterDetails.Errors.NetworkError)
+                BaseResult.Failure(GetPokemonDetails.Errors.NetworkError)
             }
 
             is ApiResult.Failure.ApiFailure -> {
                 Timber.e("api failure ${characterDetailsResult.error?.toString()}")
-                BaseResult.Failure(GetCharacterDetails.Errors.NetworkError)
+                BaseResult.Failure(GetPokemonDetails.Errors.NetworkError)
             }
 
             is ApiResult.Failure.UnknownFailure -> {
                 characterDetailsResult.error.printStackTrace()
-                BaseResult.Failure(GetCharacterDetails.Errors.UnknownError)
+                BaseResult.Failure(GetPokemonDetails.Errors.UnknownError)
             }
 
             is ApiResult.Failure.HttpFailure -> {
                 BaseResult.Failure(
-                    GetCharacterDetails.Errors.HttpError(
+                    GetPokemonDetails.Errors.HttpError(
                         characterDetailsResult.error.toString()
                     )
                 )

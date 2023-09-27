@@ -3,8 +3,8 @@ package com.pokamon.features.pokedex.di
 import com.pokamon.features.pokedex.data.api.PokedexApi
 import com.pokamon.features.pokedex.data.repository.PokedexRepository
 import com.pokamon.features.pokedex.data.repository.PokedexRepositoryImpl
-import com.pokamon.features.pokedex.domain.mapper.AllCharactersMapper
-import com.pokamon.features.pokedex.domain.mapper.AllCharactersMapperImpl
+import com.pokamon.features.pokedex.domain.mapper.AllPokemonMapper
+import com.pokamon.features.pokedex.domain.mapper.AllPokemonMapperImpl
 import com.pokamon.features.pokedex.domain.mapper.CharacterDetailsMapper
 import com.pokamon.features.pokedex.domain.mapper.CharacterDetailsMapperImpl
 import dagger.Module
@@ -37,8 +37,8 @@ object PokedexModule {
     @Provides
     @Singleton
     fun provideCharactersMapper(
-        charactersMapperImpl: AllCharactersMapperImpl
-    ): AllCharactersMapper = charactersMapperImpl
+        charactersMapperImpl: AllPokemonMapperImpl
+    ): AllPokemonMapper = charactersMapperImpl
 
     @Provides
     @Singleton

@@ -3,16 +3,16 @@ package com.pokamon.features.pokedex.domain.usecase
 import com.pokamon.features.networking.util.BaseResult
 import com.pokamon.features.pokedex.data.repository.PokedexRepository
 import com.pokamon.features.pokedex.domain.mapper.CharacterDetailsMapper
-import com.pokamon.features.pokedex.domain.model.Character
+import com.pokamon.features.pokedex.domain.model.Pokemon
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import timber.log.Timber
 import javax.inject.Inject
 
-typealias CharacterDetailsResult = BaseResult<
-        Character, GetCharacterDetails.Errors>
+typealias PokemonDetailsResult = BaseResult<
+        Pokemon, GetPokemonDetails.Errors>
 
-class GetCharacterDetails @Inject constructor(
+class GetPokemonDetails @Inject constructor(
     private val repository: PokedexRepository,
     private val characterDetailsMapper: CharacterDetailsMapper
 ) {

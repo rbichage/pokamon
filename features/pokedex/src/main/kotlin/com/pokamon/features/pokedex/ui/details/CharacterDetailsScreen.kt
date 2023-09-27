@@ -90,12 +90,12 @@ fun CharacterDetailsScreen(
                 }
             }
             is CharacterDetailsUIState.Success -> {
-                val character = state.character
+                val character = state.pokemon
 
                 Column(
                     modifier = modifier
                         .fillMaxSize()
-                        .background(character.characterColor.colorValue.copy(alpha = .5F))
+                        .background(character.pokemonColor.colorValue.copy(alpha = .5F))
                 ) {
                     Box(
                         modifier = modifier
@@ -275,7 +275,7 @@ fun CharacterDetailsScreen(
                                                 shape = RoundedCornerShape(percent = 80),
                                                 colors = InputChipDefaults.inputChipColors(
                                                     selectedContainerColor = character
-                                                        .characterColor
+                                                        .pokemonColor
                                                         .colorValue
                                                         .copy(
                                                             alpha = .5F
