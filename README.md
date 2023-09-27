@@ -26,7 +26,7 @@ Display the following information based on the applicable platforms’ design pr
 ## Setup
 
 To setup and run the project, run it
-on [Android Studio Giraffe](https://developer.android.com/studio) or a newer Android Version
+on [Android Studio Giraffe](https://developer.android.com/studio) or a newer Version
 
 ## Architecture
 

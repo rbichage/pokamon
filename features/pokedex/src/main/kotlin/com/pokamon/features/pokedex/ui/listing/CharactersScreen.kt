@@ -33,7 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,6 +45,7 @@ import com.pokamon.features.networking.util.createImageUrl
 import com.pokamon.features.pokedex.R
 import com.pokamon.features.pokedex.domain.model.PokemonListing
 import com.pokamon.features.pokedex.ui.util.UrlImageView
+import java.util.Locale
 import java.util.UUID
 
 val sampleItems = List(
@@ -55,6 +58,11 @@ val sampleItems = List(
     )
 }
 
+fun randomColor(): Color {
+    val color = (Math.random() * 16777215).toInt() or (0xFF shl 24)
+    return Color(color)
+}
+
 @Composable
 fun CharactersScreen(
     modifier: Modifier = Modifier,
@@ -65,10 +73,10 @@ fun CharactersScreen(
     var items by remember {
         mutableStateOf(listOf<PokemonListing>())
     }
-
     var showBottomSheet by remember {
         mutableStateOf(false)
     }
+
 
     val scrollState = rememberScrollState()
 
@@ -112,6 +120,7 @@ fun CharactersScreen(
 
             is CharactersUIState.Success -> {
                 items = (state as CharactersUIState.Success).characters
+
                 SearchContent {
                     showBottomSheet = true
                 }
@@ -121,7 +130,7 @@ fun CharactersScreen(
                 CharactersContent(
                     characters = items,
                     scrollState = scrollState,
-                    onItemClicked = onItemClicked
+                    onItemClicked = onItemClicked,
                 )
             }
         }
@@ -166,13 +175,6 @@ fun CharactersContent(
     scrollState: ScrollState,
     onItemClicked: (String) -> Unit
 ) {
-    val filtered = if (searchText.isNotBlank()) {
-        characters.filter {
-            it.name.contains(searchText, true)
-        }
-    } else {
-        characters
-    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -185,7 +187,7 @@ fun CharactersContent(
         )
 
         Spacer(modifier = modifier.height(24.dp))
-        if (filtered.isEmpty()) {
+        if (characters.isEmpty()) {
             Text(text = "Nothing found")
         } else {
             FlowRow(
@@ -194,7 +196,7 @@ fun CharactersContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                filtered.forEach { character ->
+                characters.forEach { character ->
                     Card(
                         modifier = modifier
                             .fillMaxWidth(.48F),
@@ -215,7 +217,14 @@ fun CharactersContent(
                             Text(
                                 modifier = modifier
                                     .align(Alignment.BottomCenter),
-                                text = character.name
+                                text = character.name.replaceFirstChar {
+                                    if (it.isLowerCase()) it.titlecase(
+                                        Locale.getDefault()
+                                    ) else it.toString()
+                                },
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
                             )
                         }
                     }
@@ -238,13 +247,13 @@ fun CharacterPreview() {
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                SearchContent{}
+                SearchContent {}
 
                 Spacer(modifier = modifier.height(16.dp))
                 CharactersContent(
                     characters = sampleItems,
                     scrollState = rememberScrollState(),
-                    onItemClicked = {}
+                    onItemClicked = {},
                 )
             }
         }
