@@ -16,3 +16,9 @@ dependencyResolutionManagement {
 
 rootProject.name = "Pokamon"
 include(":app")
+include(":features")
+include(":features:pokedex")
+include(":core")
+include(":core:networking")
+include(":core:design")
+include(":core:design")
