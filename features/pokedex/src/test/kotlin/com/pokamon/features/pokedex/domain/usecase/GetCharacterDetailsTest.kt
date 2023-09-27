@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.hannesdorfmann.instantiator.InstantiatorConfig
 import com.hannesdorfmann.instantiator.instance
 import com.pokamon.features.networking.util.BaseResult
-import com.pokamon.features.pokedex.data.model.CharacterDetailsResponse
+import com.pokamon.features.pokedex.data.model.PokemonDetailsResponse
 import com.pokamon.features.pokedex.data.model.SpeciesResponse
 import com.pokamon.features.pokedex.data.repository.PokedexRepository
 import com.pokamon.features.pokedex.domain.mapper.CharacterDetailsMapperImpl
@@ -29,17 +29,17 @@ class GetCharacterDetailsTest {
     private val repository: PokedexRepository = mockk(relaxed = true)
     private val characterDetailsMapper = CharacterDetailsMapperImpl()
 
-    private lateinit var getCharacterDetails: GetCharacterDetails
+    private lateinit var getCharacterDetails: GetPokemonDetails
 
     private val config = InstantiatorConfig(useDefaultArguments = false, useNull = false)
 
-    private val details = instance<CharacterDetailsResponse>(config)
+    private val details = instance<PokemonDetailsResponse>(config)
     private val speciesResponse = instance<SpeciesResponse>(config)
 
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher = dispatcher)
-        getCharacterDetails = GetCharacterDetails(
+        getCharacterDetails = GetPokemonDetails(
             repository, characterDetailsMapper
         )
     }
@@ -102,11 +102,11 @@ class GetCharacterDetailsTest {
             val result = this.awaitItem()
 
             val error = result as? BaseResult.Failure
-            val httpError = error?.error as? GetCharacterDetails.Errors.HttpError
+            val httpError = error?.error as? GetPokemonDetails.Errors.HttpError
 
 
             assert(error is BaseResult.Failure)
-            assert(httpError is GetCharacterDetails.Errors.HttpError)
+            assert(httpError is GetPokemonDetails.Errors.HttpError)
             assert(httpError?.message == "Not found")
 
             cancelAndIgnoreRemainingEvents()
@@ -133,11 +133,11 @@ class GetCharacterDetailsTest {
             val result = this.awaitItem()
 
             val error = result as? BaseResult.Failure
-            val httpError = error?.error as? GetCharacterDetails.Errors.NetworkError
+            val httpError = error?.error as? GetPokemonDetails.Errors.NetworkError
 
 
             assert(error is BaseResult.Failure)
-            assert(httpError is GetCharacterDetails.Errors.NetworkError)
+            assert(httpError is GetPokemonDetails.Errors.NetworkError)
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -163,11 +163,11 @@ class GetCharacterDetailsTest {
             val result = this.awaitItem()
 
             val error = result as? BaseResult.Failure
-            val httpError = error?.error as? GetCharacterDetails.Errors.UnknownError
+            val httpError = error?.error as? GetPokemonDetails.Errors.UnknownError
 
 
             assert(error is BaseResult.Failure)
-            assert(httpError is GetCharacterDetails.Errors.UnknownError)
+            assert(httpError is GetPokemonDetails.Errors.UnknownError)
 
             cancelAndIgnoreRemainingEvents()
         }

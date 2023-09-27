@@ -2,8 +2,9 @@ package com.pokamon.features.pokedex.data.repository
 
 import com.hannesdorfmann.instantiator.instance
 import com.pokamon.features.pokedex.data.api.PokedexApi
-import com.pokamon.features.pokedex.data.model.CharacterDetailsResponse
-import com.pokamon.features.pokedex.data.model.CharactersResponse
+import com.pokamon.features.pokedex.data.model.PokemonDetailsResponse
+import com.pokamon.features.pokedex.data.model.PokemonsResponse
+
 import com.pokamon.features.pokedex.data.model.SpeciesResponse
 import com.slack.eithernet.ApiResult
 import io.mockk.coEvery
@@ -27,8 +28,8 @@ class PokedexRepositoryTests {
 
     private val pokedexRepository: PokedexRepository = PokedexRepositoryImpl(pokedexApi)
 
-    private val characters = instance<CharactersResponse>()
-    private val characterDetails = instance<CharacterDetailsResponse>()
+    private val characters = instance<PokemonsResponse>()
+    private val characterDetails = instance<PokemonDetailsResponse>()
     private val speciesDetails = instance<SpeciesResponse>()
 
     @Before
@@ -47,7 +48,7 @@ class PokedexRepositoryTests {
         val exception = IOException("Unable to connect")
         val result = ApiResult.networkFailure(exception)
         coEvery {
-            pokedexApi.getCharacterDetails("1")
+            pokedexApi.getPokemonDetails("1")
         } returns result
 
         val request = pokedexRepository.getCharacterDetails("1")
@@ -85,7 +86,7 @@ class PokedexRepositoryTests {
 
         val result = ApiResult.success(characters)
         coEvery {
-            pokedexApi.getAllCharacters()
+            pokedexApi.getAllPokemons()
         } returns result
 
         val successResult = pokedexRepository.getAllCharacters()
@@ -101,7 +102,7 @@ class PokedexRepositoryTests {
 
         val result = ApiResult.success(characterDetails)
         coEvery {
-            pokedexApi.getCharacterDetails("1")
+            pokedexApi.getPokemonDetails("1")
         } returns result
 
         val successResult = pokedexRepository.getCharacterDetails("1")

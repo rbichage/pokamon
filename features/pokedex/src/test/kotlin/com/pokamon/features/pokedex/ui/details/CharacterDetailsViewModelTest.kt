@@ -4,9 +4,9 @@ import app.cash.turbine.testIn
 import com.hannesdorfmann.instantiator.InstantiatorConfig
 import com.hannesdorfmann.instantiator.instance
 import com.pokamon.features.networking.util.BaseResult
-import com.pokamon.features.pokedex.domain.model.Character
-import com.pokamon.features.pokedex.domain.usecase.CharacterDetailsResult
-import com.pokamon.features.pokedex.domain.usecase.GetCharacterDetails
+import com.pokamon.features.pokedex.domain.model.Pokemon
+import com.pokamon.features.pokedex.domain.usecase.GetPokemonDetails
+import com.pokamon.features.pokedex.domain.usecase.PokemonDetailsResult
 import com.pokamon.features.pokedex.ui.listing.ErrorType
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -25,11 +25,11 @@ import kotlin.test.assertTrue
 
 class CharacterDetailsViewModelTest {
     private val dispatcher = UnconfinedTestDispatcher()
-    private val getCharactersDetails = mockk<GetCharacterDetails>(relaxed = true)
+    private val getPokemonDetails = mockk<GetPokemonDetails>(relaxed = true)
 
     private val config = InstantiatorConfig(useDefaultArguments = false, useNull = false)
 
-    private val details = instance<Character>(config)
+    private val details = instance<Pokemon>(config)
 
     private lateinit var viewModel: CharacterDetailsViewModel
 
@@ -37,7 +37,7 @@ class CharacterDetailsViewModelTest {
     fun setup() {
         Dispatchers.setMain(dispatcher = dispatcher)
         viewModel = CharacterDetailsViewModel(
-            getCharacterDetails = getCharactersDetails,
+            getPokemonDetails = getPokemonDetails,
             coroutineDispatcher = dispatcher
         )
     }
@@ -50,13 +50,13 @@ class CharacterDetailsViewModelTest {
     @Test
     fun `test getting characters is successful`() = runTest {
         val id = Random.nextInt().toString()
-        val result = MutableStateFlow<CharacterDetailsResult>(
+        val result = MutableStateFlow<PokemonDetailsResult>(
             BaseResult.Loading()
         )
 
         val testFlow = viewModel.uIState.testIn(this)
         coEvery {
-            getCharactersDetails.execute(id)
+            getPokemonDetails.execute(id)
         } returns result
 
         viewModel.getDetails(id)
@@ -69,7 +69,7 @@ class CharacterDetailsViewModelTest {
         testFlow.apply {
             assert(awaitItem() is CharacterDetailsUIState.Loading)
             val uIState = awaitItem() as? CharacterDetailsUIState.Success
-            val character = uIState?.character
+            val character = uIState?.pokemon
             assertTrue(uIState is CharacterDetailsUIState.Success)
             assertEquals(character, details)
 
@@ -81,20 +81,20 @@ class CharacterDetailsViewModelTest {
     fun `test getting characters returns a http error`() = runTest {
         val id = Random.nextInt().toString()
         val message = "Not found"
-        val result = MutableStateFlow<CharacterDetailsResult>(
+        val result = MutableStateFlow<PokemonDetailsResult>(
             BaseResult.Loading()
         )
 
         val testFlow = viewModel.uIState.testIn(this)
         coEvery {
-            getCharactersDetails.execute(id)
+            getPokemonDetails.execute(id)
         } returns result
 
         viewModel.getDetails(id)
         assert(testFlow.awaitItem() is CharacterDetailsUIState.Idle)
 
         result.emit(
-            BaseResult.Failure(GetCharacterDetails.Errors.HttpError(message))
+            BaseResult.Failure(GetPokemonDetails.Errors.HttpError(message))
         )
 
         testFlow.apply {
