@@ -1,4 +1,4 @@
-package com.pokamon.demo.ui.theme
+package com.pokamon.core.design.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

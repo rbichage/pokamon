@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.pokamon.demo"
-        var version: Int
+        val version: Int
 
         val bytes = ByteArrayOutputStream()
         project.exec {
@@ -45,6 +45,10 @@ android {
 }
 
 dependencies {
+
+    implementation(project(":core:networking"))
+    implementation(project(":core:design"))
+    implementation(project(":features:pokedex"))
 
     implementation(libs.accompanist.ui.controller)
 }
