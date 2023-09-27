@@ -2,8 +2,8 @@ package com.pokamon.features.pokedex.data.api
 
 import com.hannesdorfmann.instantiator.InstantiatorConfig
 import com.hannesdorfmann.instantiator.instance
-import com.pokamon.features.pokedex.data.model.CharacterDetailsResponse
-import com.pokamon.features.pokedex.data.model.CharactersResponse
+import com.pokamon.features.pokedex.data.model.PokemonDetailsResponse
+import com.pokamon.features.pokedex.data.model.PokemonsResponse
 import com.pokamon.features.pokedex.data.model.SpeciesResponse
 import com.slack.eithernet.ApiResult
 import com.slack.eithernet.ApiResultCallAdapterFactory
@@ -49,13 +49,13 @@ class PokedexApiTests {
 
     private val config = InstantiatorConfig(useDefaultArguments = false, useNull = false)
 
-    private val charactersResponse = instance<CharactersResponse>(config).copy(
+    private val charactersResponse = instance<PokemonsResponse>(config).copy(
         results = List(2) {
             instance(config)
         }
     )
 
-    private val characterDetailsResponse = instance<CharacterDetailsResponse>(config)
+    private val characterDetailsResponse = instance<PokemonDetailsResponse>(config)
     private val speciesDetailsResponse = instance<SpeciesResponse>(config)
 
     @Before
@@ -83,7 +83,7 @@ class PokedexApiTests {
     fun `test getting characters is successful`() = runTest {
         val code = HttpURLConnection.HTTP_OK
 
-        val adapter = moshi.adapter(CharactersResponse::class.java)
+        val adapter = moshi.adapter(PokemonsResponse::class.java)
 
         val json = adapter.toJson(charactersResponse)
 
@@ -93,7 +93,7 @@ class PokedexApiTests {
                 .setBody(json)
         )
 
-        val response = api.getAllCharacters()
+        val response = api.getAllPokemons()
         val success = response as? ApiResult.Success
 
         assert(success is ApiResult.Success)
@@ -106,7 +106,7 @@ class PokedexApiTests {
     fun `test network request returns a http error code`() = runTest {
         val code = HttpURLConnection.HTTP_NOT_FOUND
 
-        val adapter = moshi.adapter(CharactersResponse::class.java)
+        val adapter = moshi.adapter(PokemonsResponse::class.java)
 
 
         mockWebServer.enqueue(
@@ -115,7 +115,7 @@ class PokedexApiTests {
                 .setBody("Not found")
         )
 
-        val response = api.getAllCharacters()
+        val response = api.getAllPokemons()
         val success = response as? ApiResult.Failure
 
         assert(success is ApiResult.Failure)
@@ -126,7 +126,7 @@ class PokedexApiTests {
     fun `test getting character details is successful`() = runTest {
         val code = HttpURLConnection.HTTP_OK
 
-        val adapter = moshi.adapter(CharacterDetailsResponse::class.java)
+        val adapter = moshi.adapter(PokemonDetailsResponse::class.java)
 
         val json = adapter.toJson(characterDetailsResponse)
 
@@ -136,7 +136,7 @@ class PokedexApiTests {
                 .setBody(json)
         )
 
-        val response = api.getCharacterDetails("1")
+        val response = api.getPokemonDetails("1")
         val success = response as? ApiResult.Success
 
         assert(success is ApiResult.Success)

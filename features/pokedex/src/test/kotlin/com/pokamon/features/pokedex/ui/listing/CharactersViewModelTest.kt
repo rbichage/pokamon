@@ -4,9 +4,9 @@ import app.cash.turbine.testIn
 import com.hannesdorfmann.instantiator.InstantiatorConfig
 import com.hannesdorfmann.instantiator.instance
 import com.pokamon.features.networking.util.BaseResult
-import com.pokamon.features.pokedex.domain.mapper.GetCharactersResult
-import com.pokamon.features.pokedex.domain.model.CharacterListing
-import com.pokamon.features.pokedex.domain.usecase.GetCharacters
+import com.pokamon.features.pokedex.domain.mapper.GetPokemonsResult
+import com.pokamon.features.pokedex.domain.model.PokemonListing
+import com.pokamon.features.pokedex.domain.usecase.GetPokemons
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -23,11 +23,11 @@ import kotlin.test.assertTrue
 class CharactersViewModelTest {
 
     private val dispatcher = UnconfinedTestDispatcher()
-    private val getCharacters = mockk<GetCharacters>(relaxed = true)
+    private val getCharacters = mockk<GetPokemons>(relaxed = true)
 
     private val config = InstantiatorConfig(useDefaultArguments = false, useNull = false)
     private val characters = List(5) {
-        instance<CharacterListing>(config)
+        instance<PokemonListing>(config)
     }
 
     private lateinit var charactersViewModel: CharactersViewModel
@@ -36,7 +36,7 @@ class CharactersViewModelTest {
     fun setUp() {
         Dispatchers.setMain(dispatcher)
         charactersViewModel = CharactersViewModel(
-            getCharacters = getCharacters,
+            getPokemons = getCharacters,
             coroutineDispatcher = dispatcher
         )
     }
@@ -48,7 +48,7 @@ class CharactersViewModelTest {
 
     @Test
     fun `test getting characters is successful`() = runTest {
-        val result = MutableStateFlow<GetCharactersResult>(
+        val result = MutableStateFlow<GetPokemonsResult>(
             BaseResult.Loading()
         )
 
@@ -79,7 +79,7 @@ class CharactersViewModelTest {
 
     @Test
     fun `test getting characters returns a network error`() = runTest {
-        val result = MutableStateFlow<GetCharactersResult>(
+        val result = MutableStateFlow<GetPokemonsResult>(
             BaseResult.Loading()
         )
 
@@ -92,7 +92,7 @@ class CharactersViewModelTest {
         assert(testFlow.awaitItem() is CharactersUIState.Loading)
 
         result.emit(
-            BaseResult.Failure(GetCharacters.Errors.NetworkError)
+            BaseResult.Failure(GetPokemons.Errors.NetworkError)
         )
 
         testFlow.apply {
@@ -108,7 +108,7 @@ class CharactersViewModelTest {
     @Test
     fun `test getting characters returns a http error`() = runTest {
         val message = "Not found"
-        val result = MutableStateFlow<GetCharactersResult>(
+        val result = MutableStateFlow<GetPokemonsResult>(
             BaseResult.Loading()
         )
 
@@ -121,7 +121,7 @@ class CharactersViewModelTest {
         assert(testFlow.awaitItem() is CharactersUIState.Loading)
 
         result.emit(
-            BaseResult.Failure(GetCharacters.Errors.HttpError(message))
+            BaseResult.Failure(GetPokemons.Errors.HttpError(message))
         )
 
         testFlow.apply {

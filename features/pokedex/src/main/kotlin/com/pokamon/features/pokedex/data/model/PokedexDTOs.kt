@@ -214,7 +214,7 @@ data class Variety(
     @Json(name = "is_default")
     val isDefault: Boolean,
     @Json(name = "pokemon")
-    val pokemon: Pokemon
+    val pokemon: PokemonDTO
 )
 
 @Keep
@@ -247,15 +247,6 @@ data class Area(
 @Keep
 @JsonClass(generateAdapter = true)
 data class Pokedex(
-    @Json(name = "name")
-    val name: String,
-    @Json(name = "url")
-    val url: String
-)
-
-@Keep
-@JsonClass(generateAdapter = true)
-data class Pokemon(
     @Json(name = "name")
     val name: String,
     @Json(name = "url")

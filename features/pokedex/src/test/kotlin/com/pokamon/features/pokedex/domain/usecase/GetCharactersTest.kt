@@ -4,9 +4,9 @@ import app.cash.turbine.test
 import com.hannesdorfmann.instantiator.InstantiatorConfig
 import com.hannesdorfmann.instantiator.instance
 import com.pokamon.features.networking.util.BaseResult
-import com.pokamon.features.pokedex.data.model.CharactersResponse
+import com.pokamon.features.pokedex.data.model.PokemonsResponse
 import com.pokamon.features.pokedex.data.repository.PokedexRepository
-import com.pokamon.features.pokedex.domain.mapper.AllCharactersMapperImpl
+import com.pokamon.features.pokedex.domain.mapper.AllPokemonMapperImpl
 import com.slack.eithernet.ApiResult
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -25,18 +25,18 @@ import kotlin.test.assertTrue
 class GetCharactersTest {
     private val dispatcher = UnconfinedTestDispatcher()
     private val repository: PokedexRepository = mockk(relaxed = true)
-    private val mapper = AllCharactersMapperImpl()
+    private val mapper = AllPokemonMapperImpl()
 
-    private lateinit var getCharacters: GetCharacters
+    private lateinit var getCharacters: GetPokemons
 
     private val config = InstantiatorConfig(useDefaultArguments = false, useNull = false)
 
-    private val characters = instance<CharactersResponse>(config)
+    private val characters = instance<PokemonsResponse>(config)
 
     @Before
     fun setUp() {
         Dispatchers.setMain(dispatcher = dispatcher)
-        getCharacters = GetCharacters(
+        getCharacters = GetPokemons(
             repository, mapper
         )
     }
@@ -87,11 +87,11 @@ class GetCharactersTest {
 
             val failure = result as? BaseResult.Failure
 
-            val error = failure?.error as? GetCharacters.Errors.HttpError
+            val error = failure?.error as? GetPokemons.Errors.HttpError
 
 
             assert(failure is BaseResult.Failure)
-            assert(error is GetCharacters.Errors.HttpError)
+            assert(error is GetPokemons.Errors.HttpError)
             assert(error?.message == "Not found")
 
             cancelAndIgnoreRemainingEvents()
@@ -116,10 +116,10 @@ class GetCharactersTest {
 
             val failure = result as? BaseResult.Failure
 
-            val error = failure?.error as? GetCharacters.Errors.NetworkError
+            val error = failure?.error as? GetPokemons.Errors.NetworkError
 
             assert(failure is BaseResult.Failure)
-            assert(error is GetCharacters.Errors.NetworkError)
+            assert(error is GetPokemons.Errors.NetworkError)
 
             cancelAndIgnoreRemainingEvents()
         }
@@ -143,10 +143,10 @@ class GetCharactersTest {
 
             val failure = result as? BaseResult.Failure
 
-            val error = failure?.error as? GetCharacters.Errors.UnknownError
+            val error = failure?.error as? GetPokemons.Errors.UnknownError
 
             assert(failure is BaseResult.Failure)
-            assert(error is GetCharacters.Errors.UnknownError)
+            assert(error is GetPokemons.Errors.UnknownError)
 
             cancelAndIgnoreRemainingEvents()
         }
