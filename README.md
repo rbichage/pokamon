@@ -45,7 +45,7 @@ depend directly on the `core modules`.
 
 ### Feature Modules
 
-The feature modules, represent a singular feature of the app, such as authentication. It allows us
+The feature modules, represent a singular feature of the app, such as pokedex (list of pokemon and the details). It allows us
 to decouple the features from the app itself and test these in isolation.
 
 > It is important to note that no feature modules should ever depend on other feature modules.
@@ -56,7 +56,8 @@ The core modules include code that is common amongst features, and other core mo
 things such as the design system.
 
 Features depend on core modules and core modules can depend on one another. We should be careful to
-not create cyclical dependencies amongst the core modules however.
+not create cyclical dependencies amongst the core modules, however.
+
 In the case of cyclical dependencies we most likely can refactor the code which is needed into a
 separate core module such as `:core-common`
 

@@ -43,7 +43,6 @@ import com.pokamon.features.networking.util.createImageUrl
 import com.pokamon.features.pokedex.R
 import com.pokamon.features.pokedex.domain.model.PokemonListing
 import com.pokamon.features.pokedex.ui.util.UrlImageView
-import timber.log.Timber
 import java.util.UUID
 
 val sampleItems = List(
@@ -67,7 +66,20 @@ fun CharactersScreen(
         mutableStateOf(listOf<PokemonListing>())
     }
 
+    var showBottomSheet by remember {
+        mutableStateOf(false)
+    }
+
     val scrollState = rememberScrollState()
+
+    if (showBottomSheet) {
+        SearchBottomSheet(pokemon = items, onDismiss = { id ->
+            showBottomSheet = false
+            if (id.isNotBlank()) {
+                onItemClicked(id)
+            }
+        })
+    }
 
     Column(
         modifier = modifier
@@ -100,7 +112,9 @@ fun CharactersScreen(
 
             is CharactersUIState.Success -> {
                 items = (state as CharactersUIState.Success).characters
-                SearchContent()
+                SearchContent {
+                    showBottomSheet = true
+                }
 
                 Spacer(modifier = modifier.height(16.dp))
 
@@ -117,13 +131,14 @@ fun CharactersScreen(
 
 @Composable
 fun SearchContent(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSearchClicked: () -> Unit
 ) {
     OutlinedTextField(
         modifier = modifier
             .fillMaxWidth()
             .clickable {
-                Timber.e("search clicked")
+                onSearchClicked()
             },
         value = "",
         onValueChange = {},
@@ -223,7 +238,7 @@ fun CharacterPreview() {
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                SearchContent()
+                SearchContent{}
 
                 Spacer(modifier = modifier.height(16.dp))
                 CharactersContent(
