@@ -1,6 +1,6 @@
 ## Pokamon
 
-Pokamon is an  app that uses Pokéapi to display a list of Pokémon, and their abilities.
+Pokamon is an  app that uses Pokéapi to display a list of Pokémon species, and their abilities.
 ## Requirements:
 
 ### Home Screen

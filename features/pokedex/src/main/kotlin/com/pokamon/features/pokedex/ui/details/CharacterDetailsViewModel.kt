@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pokamon.features.networking.di.IODispatcher
 import com.pokamon.features.networking.util.BaseResult
-import com.pokamon.features.pokedex.domain.model.Character
-import com.pokamon.features.pokedex.domain.usecase.GetCharacterDetails
+import com.pokamon.features.pokedex.domain.model.Pokemon
+import com.pokamon.features.pokedex.domain.usecase.GetPokemonDetails
 import com.pokamon.features.pokedex.ui.listing.ErrorType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CharacterDetailsViewModel @Inject constructor(
-    private val getCharacterDetails: GetCharacterDetails,
+    private val getPokemonDetails: GetPokemonDetails,
     @IODispatcher private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -29,7 +29,7 @@ class CharacterDetailsViewModel @Inject constructor(
     val uIState = getDetailsEvent
         .receiveAsFlow()
         .flatMapMerge {
-            getCharacterDetails.execute(it)
+            getPokemonDetails.execute(it)
         }.map { result ->
             mapToUIState(result)
         }.flowOn(coroutineDispatcher)
@@ -44,13 +44,13 @@ class CharacterDetailsViewModel @Inject constructor(
     }
 
     private fun mapToUIState(
-        result: BaseResult<Character, GetCharacterDetails.Errors>
+        result: BaseResult<Pokemon, GetPokemonDetails.Errors>
     ): CharacterDetailsUIState {
         return when (result) {
             is BaseResult.Loading -> CharacterDetailsUIState.Loading
             is BaseResult.Failure -> {
                 when (val error = result.error) {
-                    is GetCharacterDetails.Errors.HttpError -> {
+                    is GetPokemonDetails.Errors.HttpError -> {
                         CharacterDetailsUIState.Error(
                             errorType = ErrorType.HttpError(
                                 message = error.message
@@ -58,13 +58,13 @@ class CharacterDetailsViewModel @Inject constructor(
                         )
                     }
 
-                    GetCharacterDetails.Errors.NetworkError -> {
+                    GetPokemonDetails.Errors.NetworkError -> {
                         CharacterDetailsUIState.Error(
                             errorType = ErrorType.NetworkError
                         )
                     }
 
-                    GetCharacterDetails.Errors.UnknownError -> {
+                    GetPokemonDetails.Errors.UnknownError -> {
                         CharacterDetailsUIState.Error(
                             errorType = ErrorType.UnknownError
                         )
@@ -80,6 +80,6 @@ class CharacterDetailsViewModel @Inject constructor(
 sealed interface CharacterDetailsUIState {
     data object Idle : CharacterDetailsUIState
     data object Loading : CharacterDetailsUIState
-    data class Success(val character: Character) : CharacterDetailsUIState
+    data class Success(val pokemon: Pokemon) : CharacterDetailsUIState
     data class Error(val errorType: ErrorType) : CharacterDetailsUIState
 }

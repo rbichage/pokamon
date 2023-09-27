@@ -2,7 +2,7 @@ package com.pokamon.features.pokedex.domain.mapper
 
 import androidx.compose.ui.graphics.Color
 
-enum class CharacterColor(
+enum class PokemonColor(
     val colorValue: Color
 ) {
     Red(Color.Red),
@@ -18,18 +18,18 @@ enum class CharacterColor(
     Unknown(Color.Transparent),
 }
 
-fun mapToColor(value: String): CharacterColor {
+fun mapToColor(value: String): PokemonColor {
     return when {
-        value.contentEquals(CharacterColor.Red.name, true) ->CharacterColor.Red
-        value.contentEquals(CharacterColor.Blue.name, true) ->CharacterColor.Blue
-        value.contentEquals(CharacterColor.Yellow.name, true) ->CharacterColor.Yellow
-        value.contentEquals(CharacterColor.Green.name, true) ->CharacterColor.Green
-        value.contentEquals(CharacterColor.Black.name, true) ->CharacterColor.Black
-        value.contentEquals(CharacterColor.Brown.name, true) ->CharacterColor.Brown
-        value.contentEquals(CharacterColor.Purple.name, true) ->CharacterColor.Purple
-        value.contentEquals(CharacterColor.Gray.name, true) ->CharacterColor.Gray
-        value.contentEquals(CharacterColor.White.name, true) ->CharacterColor.White
-        value.contentEquals(CharacterColor.Pink.name, true) ->CharacterColor.Pink
-        else ->CharacterColor.Unknown
+        value.contentEquals(PokemonColor.Red.name, true) -> PokemonColor.Red
+        value.contentEquals(PokemonColor.Blue.name, true) -> PokemonColor.Blue
+        value.contentEquals(PokemonColor.Yellow.name, true) -> PokemonColor.Yellow
+        value.contentEquals(PokemonColor.Green.name, true) -> PokemonColor.Green
+        value.contentEquals(PokemonColor.Black.name, true) -> PokemonColor.Black
+        value.contentEquals(PokemonColor.Brown.name, true) -> PokemonColor.Brown
+        value.contentEquals(PokemonColor.Purple.name, true) -> PokemonColor.Purple
+        value.contentEquals(PokemonColor.Gray.name, true) -> PokemonColor.Gray
+        value.contentEquals(PokemonColor.White.name, true) -> PokemonColor.White
+        value.contentEquals(PokemonColor.Pink.name, true) -> PokemonColor.Pink
+        else -> PokemonColor.Unknown
     }
 }

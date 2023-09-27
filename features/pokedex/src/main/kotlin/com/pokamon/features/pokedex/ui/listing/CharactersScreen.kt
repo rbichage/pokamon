@@ -33,13 +33,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.pokamon.core.design.theme.PokamonTheme
 import com.pokamon.features.networking.util.createImageUrl
-import com.pokamon.features.pokedex.domain.model.CharacterListing
+import com.pokamon.features.pokedex.R
+import com.pokamon.features.pokedex.domain.model.PokemonListing
 import com.pokamon.features.pokedex.ui.util.UrlImageView
 import timber.log.Timber
 import java.util.UUID
@@ -47,9 +49,9 @@ import java.util.UUID
 val sampleItems = List(
     20,
 ) {
-    CharacterListing(
+    PokemonListing(
         id = UUID.randomUUID().toString(),
-        name = " Character $it",
+        name = " Pokemon $it",
         imageUrl = createImageUrl((it + 1).toString())
     )
 }
@@ -62,12 +64,9 @@ fun CharactersScreen(
     val viewModel = hiltViewModel<CharactersViewModel>()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var items by remember {
-        mutableStateOf(listOf<CharacterListing>())
+        mutableStateOf(listOf<PokemonListing>())
     }
 
-    var searchText by remember {
-        mutableStateOf("")
-    }
     val scrollState = rememberScrollState()
 
     Column(
@@ -83,7 +82,7 @@ fun CharactersScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "An error occurred")
+                    Text(text = stringResource(R.string.an_error_occurred))
                 }
             }
 
@@ -101,11 +100,7 @@ fun CharactersScreen(
 
             is CharactersUIState.Success -> {
                 items = (state as CharactersUIState.Success).characters
-                SearchContent(
-                    value = searchText,
-                    onValueChange = {
-                        searchText = it
-                    })
+                SearchContent()
 
                 Spacer(modifier = modifier.height(16.dp))
 
@@ -122,9 +117,7 @@ fun CharactersScreen(
 
 @Composable
 fun SearchContent(
-    modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit
+    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
         modifier = modifier
@@ -141,7 +134,7 @@ fun SearchContent(
             )
         },
         placeholder = {
-            Text(text = "Tap to search")
+            Text(text = stringResource(R.string.tap_to_search))
         },
         shape = RoundedCornerShape(percent = 50),
         readOnly = true,
@@ -153,7 +146,7 @@ fun SearchContent(
 @Composable
 fun CharactersContent(
     modifier: Modifier = Modifier,
-    characters: List<CharacterListing>,
+    characters: List<PokemonListing>,
     searchText: String = "",
     scrollState: ScrollState,
     onItemClicked: (String) -> Unit
@@ -225,20 +218,12 @@ fun CharacterPreview() {
         Surface(
             modifier.fillMaxSize()
         ) {
-
-            var searchText by remember {
-                mutableStateOf("")
-            }
             Column(
                 modifier = modifier
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                SearchContent(
-                    value = searchText,
-                    onValueChange = {
-                        searchText = it
-                    })
+                SearchContent()
 
                 Spacer(modifier = modifier.height(16.dp))
                 CharactersContent(

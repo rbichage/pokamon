@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pokamon.features.networking.di.IODispatcher
 import com.pokamon.features.networking.util.BaseResult
-import com.pokamon.features.pokedex.domain.mapper.GetCharactersResult
-import com.pokamon.features.pokedex.domain.model.CharacterListing
-import com.pokamon.features.pokedex.domain.usecase.GetCharacters
+import com.pokamon.features.pokedex.domain.mapper.GetPokemonsResult
+import com.pokamon.features.pokedex.domain.model.PokemonListing
+import com.pokamon.features.pokedex.domain.usecase.GetPokemons
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CharactersViewModel @Inject constructor(
-    private val getCharacters: GetCharacters,
+    private val getPokemons: GetPokemons,
     @IODispatcher private val coroutineDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -34,7 +34,7 @@ class CharactersViewModel @Inject constructor(
     val uiState = getCharactersEvent
         .receiveAsFlow()
         .flatMapMerge {
-            getCharacters.execute()
+            getPokemons.execute()
         }.map { result ->
             mapToUIState(result)
         }.flowOn(coroutineDispatcher)
@@ -50,18 +50,18 @@ class CharactersViewModel @Inject constructor(
 
     fun filterCharacters(
         searchText: String = "",
-        characters: List<CharacterListing> = emptyList()
+        characters: List<PokemonListing> = emptyList()
     ) {
 //        getCharactersEvent.trySend(Request(searchText, characters))
     }
 
     private fun mapToUIState(
-        result: GetCharactersResult
+        result: GetPokemonsResult
     ): CharactersUIState {
         return when (result) {
             is BaseResult.Failure -> {
                 when (val error = result.error) {
-                    is GetCharacters.Errors.HttpError -> {
+                    is GetPokemons.Errors.HttpError -> {
                         CharactersUIState.Error(
                             errorType = ErrorType.HttpError(
                                 error.message
@@ -69,13 +69,13 @@ class CharactersViewModel @Inject constructor(
                         )
                     }
 
-                    GetCharacters.Errors.NetworkError -> {
+                    GetPokemons.Errors.NetworkError -> {
                         CharactersUIState.Error(
                             errorType = ErrorType.NetworkError
                         )
                     }
 
-                    GetCharacters.Errors.UnknownError -> {
+                    GetPokemons.Errors.UnknownError -> {
                         CharactersUIState.Error(
                             errorType = ErrorType.UnknownError
                         )
@@ -100,7 +100,7 @@ class CharactersViewModel @Inject constructor(
 
 sealed interface CharactersUIState {
     data object Loading : CharactersUIState
-    data class Success(val characters: List<CharacterListing>) : CharactersUIState
+    data class Success(val characters: List<PokemonListing>) : CharactersUIState
     data class Error(val errorType: ErrorType) : CharactersUIState
 }
 

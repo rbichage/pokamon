@@ -7,16 +7,16 @@ import com.squareup.moshi.JsonClass
 
 @Keep
 @JsonClass(generateAdapter = true)
-data class CharactersResponse(
+data class PokemonsResponse(
     @Json(name = "count")
     val count: Int,
     @Json(name = "results")
-    val results: List<CharacterDTO>
+    val results: List<PokemonDTO>
 )
 
 @Keep
 @JsonClass(generateAdapter = true)
-data class CharacterDTO(
+data class PokemonDTO(
     @Json(name = "name")
     val name: String,
     @Json(name = "url")
@@ -25,7 +25,7 @@ data class CharacterDTO(
 
 @Keep
 @JsonClass(generateAdapter = true)
-data class CharacterDetailsResponse(
+data class PokemonDetailsResponse(
     @Json(name = "abilities")
     val abilities: List<Ability>,
     @Json(name = "base_experience")
